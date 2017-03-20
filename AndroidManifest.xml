@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
+            android:label="@string/nav_last_updates"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,6 +19,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".StarcraftActivity"
+            android:label="@string/nav_game_starcraft"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ChatActivity"
+            android:label="@string/nav_chat"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".LoginActivity" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/nav_settings"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Register"></activity>
     </application>
 
 </manifest>

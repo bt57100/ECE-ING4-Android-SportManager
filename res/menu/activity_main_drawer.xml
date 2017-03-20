@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+
     <group android:checkableBehavior="single">
 
+        <item
+            android:id="@+id/nav_last_updates"
+            android:icon="@drawable/ic_update_black_24dp"
+            android:title="@string/nav_last_updates" />
+
         <item android:title="@string/nav_title_game">
+            <menu>
             <item
                 android:id="@+id/nav_starcraft"
                 android:icon="@drawable/ic_menu_camera"
@@ -12,9 +19,8 @@
                 android:id="@+id/nav_chat"
                 android:icon="@drawable/ic_menu_gallery"
                 android:title="@string/nav_chat" />
-
+            </menu>
         </item>
-    </group>
 
     <item android:title="@string/nav_title_miscellaneous">
         <menu>
@@ -25,4 +31,10 @@
         </menu>
     </item>
 
+    <item
+        android:id="@+id/logout"
+        android:icon="@drawable/ic_power_settings_new_black_24dp"
+        android:title="@string/nav_quit" />
+
+    </group>
 </menu>

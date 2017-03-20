@@ -1,0 +1,234 @@
+package coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi;
+
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONObject;
+
+
+/**
+ * A login screen that offers login via email/password.
+ */
+public class RegisterActivity extends AppCompatActivity {
+    // Progress Dialog
+    private ProgressDialog pDialog;
+
+    private static Button mEmailSignInButton;
+
+    // UI references.
+    private EditText mEmailView;
+    private EditText mPasswordView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+        // Set up the login form.
+        mEmailView = (EditText) findViewById(R.id.email);
+
+        mPasswordView = (EditText) findViewById(R.id.passwordLogin);
+
+        mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                attemptRegister();
+            }
+        });
+/*
+        TextView registerText = (TextView) findViewById(R.id.register_text);
+        registerText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                login();
+            }
+        });*/
+    }
+
+    private void login() {
+        Intent i = new Intent(this, LoginActivity.class);
+        startActivity(i);
+    }
+
+    /**
+     * Attempts to sign in or register the account specified by the login form.
+     * If there are form errors (invalid email, missing fields, etc.), the
+     * errors are presented and no actual login attempt is made.
+     */
+    private void attemptRegister() {
+
+        // Reset errors.
+        mEmailView.setError(null);
+        mPasswordView.setError(null);
+
+        // Store values at the time of the login attempt.
+        String email = mEmailView.getText().toString();
+        String password = mPasswordView.getText().toString();
+
+        boolean cancel = false;
+        View focusView = null;
+        // Check for a valid password, if the user entered one.
+        if (TextUtils.isEmpty(password) || !isPasswordValid(password)) {
+            mPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = mPasswordView;
+            cancel = true;
+        }
+
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(email)) {
+            mEmailView.setError(getString(R.string.error_field_required));
+            focusView = mEmailView;
+            cancel = true;
+        } else if (!isEmailValid(email)) {
+            mEmailView.setError(getString(R.string.error_invalid_email));
+            focusView = mEmailView;
+            cancel = true;
+        }
+
+        if (cancel) {
+            // There was an error; don't attempt login and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+        } else {
+            // Show a progress spinner, and kick off a background task to
+            // perform the user login attempt.
+            //showProgress(true);
+            new UserRegisterTask().execute();
+        }
+    }
+
+    private boolean isEmailValid(String email) {
+        return email.matches("^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
+    }
+
+    private boolean isPasswordValid(String password) {
+        return password.length() > 4;
+    }
+
+    private void success() {
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
+    }
+
+    /**
+     * Represents an asynchronous login/registration task used to authenticate
+     * the user.
+     */
+    public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
+
+        private String success = "0";
+        private String url;
+        private String message = "1";
+        private String data = "";
+        JSONObject jsonData;
+
+        public UserRegisterTask() {
+            this.url = MyGlobalVars.url_register_user
+                    + MyGlobalVars.TAG_EMAIL + mEmailView.getText().toString()
+                    + MyGlobalVars.TAG_PASSWORD + mPasswordView.getText().toString();
+        }
+
+        /**
+         * Before starting background thread Show Progress Dialog
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(RegisterActivity.this);
+            pDialog.setMessage("Loading user details. Please wait...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+            mEmailSignInButton.setClickable(false);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            ConnectJSON connection = new ConnectJSON(url);
+            data = connection.getJSON();
+            if(data.isEmpty()) {
+                return false;
+            } else {
+                // TODO treatment of JSON
+                return true;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            if(this.success.contentEquals("1")) {
+                new UserLoginTask().execute();
+            } else {
+                Toast.makeText(getApplicationContext(), this.message,
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    /**
+     * Represents an asynchronous login/registration task used to authenticate
+     * the user.
+     */
+    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+
+        private String success = "0";
+        private String url;
+        private String message = "1";
+        private String data = "";
+        JSONObject jsonData;
+
+        public UserLoginTask() {
+            this.url = MyGlobalVars.url_connect_user
+                    + MyGlobalVars.TAG_EMAIL + mEmailView.getText().toString()
+                    + MyGlobalVars.TAG_PASSWORD + mPasswordView.getText().toString();
+        }
+
+        /**
+         * Before starting background thread Show Progress Dialog
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mEmailSignInButton.setClickable(false);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            ConnectJSON connection = new ConnectJSON(url);
+            data = connection.getJSON();
+            if(data.isEmpty()) {
+                return false;
+            } else {
+                // TODO treatment of JSON
+                return true;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            // dismiss the dialog once got all details
+            if(pDialog.isShowing()) {
+                pDialog.dismiss();
+            }
+            if (this.success.contentEquals("1")) {
+                // TODO save data in main thread
+                success();
+            } else {
+                Toast.makeText(getApplicationContext(), this.message,
+                        Toast.LENGTH_LONG).show();
+            }
+            mEmailSignInButton.setClickable(true);
+        }
+    }
+}
+
+
