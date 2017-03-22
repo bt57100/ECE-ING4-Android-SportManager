@@ -18,4 +18,11 @@ public class MyGlobalVars {
     public static final String TAG_USER_ID = "USER_ID";
     public static final String TAG_PASSWORD = "PASSWORD";
 
+
+    public static final String TAG_PLAYER1 = "PLAYER1";
+    public static final String TAG_PLAYER2 = "PLAYER2";
+    public static final String TAG_TEAM1 = "TEAM1";
+    public static final String TAG_TEAM2 = "TEAM2";
+    public static final String TAG_SCORE = "SCORE";
+
 }

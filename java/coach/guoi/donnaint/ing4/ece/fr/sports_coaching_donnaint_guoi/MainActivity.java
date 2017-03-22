@@ -1,5 +1,7 @@
 package coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -32,6 +34,29 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        addMatchToView(fragmentTransaction,"match2");
+        addMatchToView(fragmentTransaction,"match3");
+        addMatchToView(fragmentTransaction,"match4");
+        fragmentTransaction.commit();
+    }
+
+    public void addMatchToView(FragmentTransaction fragmentTransaction, String id) {
+        GameInfoFragment gameInfo = new GameInfoFragment();
+        gameInfo.setArguments(createGameBundle("Nicolas","Kevin","Donnaint","Guoi",id));
+        fragmentTransaction.add(R.id.mainGameContainer, gameInfo);
+    }
+
+    public Bundle createGameBundle (String player1, String player2, String team1, String team2,
+                                    String score) {
+        Bundle gameBundle = new Bundle();
+        gameBundle.putString(MyGlobalVars.TAG_PLAYER1, player1);
+        gameBundle.putString(MyGlobalVars.TAG_PLAYER2, player2);
+        gameBundle.putString(MyGlobalVars.TAG_TEAM1, team1);
+        gameBundle.putString(MyGlobalVars.TAG_TEAM2, team2);
+        gameBundle.putString(MyGlobalVars.TAG_SCORE, score);
+        return gameBundle;
     }
 
     @Override
