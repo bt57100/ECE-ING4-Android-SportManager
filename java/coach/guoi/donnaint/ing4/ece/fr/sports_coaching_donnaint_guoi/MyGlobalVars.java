@@ -16,7 +16,10 @@ public class MyGlobalVars {
     public static final String TAG_EMAIL = "EMAIL";
     public static final String TAG_MESSAGE = "MESSAGE";
     public static final String TAG_USER_ID = "USER_ID";
+    public static final String TAG_USER = "USER";
+    public static final String TAG_NAME = "NAME";
     public static final String TAG_PASSWORD = "PASSWORD";
+    public static final String TAG_SUCCESS = "SUCCESS";
 
 
     public static final String TAG_PLAYER1 = "PLAYER1";

@@ -12,6 +12,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -22,6 +24,8 @@ public class RegisterActivity extends AppCompatActivity {
     // Progress Dialog
     private ProgressDialog pDialog;
 
+    private static String user_id;
+    private static String user_name;
     private static Button mEmailSignInButton;
 
     // UI references.
@@ -118,24 +122,17 @@ public class RegisterActivity extends AppCompatActivity {
         Intent i = new Intent(this, MainActivity.class);
         startActivity(i);
     }
-
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
     public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
-
+        private String url = "";
         private String success = "0";
-        private String url;
-        private String message = "1";
+        private String message = "";
         private String data = "";
         JSONObject jsonData;
 
-        public UserRegisterTask() {
-            this.url = MyGlobalVars.url_register_user
-                    + MyGlobalVars.TAG_EMAIL + mEmailView.getText().toString()
-                    + MyGlobalVars.TAG_PASSWORD + mPasswordView.getText().toString();
-        }
 
         /**
          * Before starting background thread Show Progress Dialog
@@ -149,16 +146,25 @@ public class RegisterActivity extends AppCompatActivity {
             pDialog.setCancelable(true);
             pDialog.show();
             mEmailSignInButton.setClickable(false);
+            url = MyGlobalVars.url_register_user
+                    + MyGlobalVars.TAG_EMAIL + "=" + mEmailView.getText().toString() + "&"
+                    + MyGlobalVars.TAG_PASSWORD + "=" + mPasswordView.getText().toString();
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            ConnectJSON connection = new ConnectJSON(url);
-            data = connection.getJSON();
+
+            data = new ConnectToDB(url).connectJSON();
             if(data.isEmpty()) {
                 return false;
             } else {
-                // TODO treatment of JSON
+                try {
+                    jsonData = new JSONObject(data);
+                    this.success = jsonData.getString(MyGlobalVars.TAG_SUCCESS);
+                    this.message = jsonData.getString(MyGlobalVars.TAG_MESSAGE);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 return true;
             }
         }
@@ -174,23 +180,20 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
+        private String url = "";
         private String success = "0";
-        private String url;
-        private String message = "1";
+        private String userId = "0";
+        private String userName = "";
+        private String message = "";
         private String data = "";
         JSONObject jsonData;
 
-        public UserLoginTask() {
-            this.url = MyGlobalVars.url_connect_user
-                    + MyGlobalVars.TAG_EMAIL + mEmailView.getText().toString()
-                    + MyGlobalVars.TAG_PASSWORD + mPasswordView.getText().toString();
-        }
 
         /**
          * Before starting background thread Show Progress Dialog
@@ -199,16 +202,29 @@ public class RegisterActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             mEmailSignInButton.setClickable(false);
+            url = MyGlobalVars.url_connect_user
+                    + MyGlobalVars.TAG_EMAIL + "=" + mEmailView.getText().toString() + "&"
+                    + MyGlobalVars.TAG_PASSWORD + "=" + mPasswordView.getText().toString();
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            ConnectJSON connection = new ConnectJSON(url);
-            data = connection.getJSON();
+
+            data = new ConnectToDB(url).connectJSON();
             if(data.isEmpty()) {
                 return false;
             } else {
-                // TODO treatment of JSON
+                try {
+                    jsonData = new JSONObject(data);
+                    this.message = jsonData.getString(MyGlobalVars.TAG_MESSAGE);
+                    this.success = jsonData.getString(MyGlobalVars.TAG_SUCCESS);
+                    JSONArray users = jsonData.getJSONArray(MyGlobalVars.TAG_USER);
+                    JSONObject user = users.getJSONObject(0);
+                    this.userId = user.getString(MyGlobalVars.TAG_USER_ID);
+                    this.userName = user.getString(MyGlobalVars.TAG_NAME);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 return true;
             }
         }
@@ -220,7 +236,8 @@ public class RegisterActivity extends AppCompatActivity {
                 pDialog.dismiss();
             }
             if (this.success.contentEquals("1")) {
-                // TODO save data in main thread
+                user_id = this.userId;
+                user_name = this.userName;
                 success();
             } else {
                 Toast.makeText(getApplicationContext(), this.message,

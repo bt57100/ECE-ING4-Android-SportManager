@@ -15,20 +15,17 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Represents an asynchronous login/registration task used to authenticate
- * the user.
- */
-public class ConnectJSON {
-    // Progress Dialog
-    private String url;
+public class ConnectToDB {
+    private String url = "";
 
-    public ConnectJSON(String url) {
+    public ConnectToDB(String url) {
         this.url = url;
     }
 
-    public String getJSON() {
+    public String connectJSON() {
+        String response="";
         HttpURLConnection connection = null;
+        int status=0;
         try {
             url = url.replaceAll(" ", "%20");
             URL u = new URL(url);
@@ -42,7 +39,7 @@ public class ConnectJSON {
             connection.setConnectTimeout(MyGlobalVars.TIMEOUT);
             connection.setReadTimeout(MyGlobalVars.TIMEOUT);
             connection.connect();
-            int status = connection.getResponseCode();
+            status = connection.getResponseCode();
             switch (status) {
                 case 200:
                 case 201:
@@ -54,14 +51,18 @@ public class ConnectJSON {
                         sb.append(line).append("\n");
                     }
                     br.close();
-                    String response = sb.toString();
+                    response = sb.toString();
                     return response;
             }
 
         } catch (MalformedURLException ex) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+            status=100;
+            response=ex.getMessage();
         } catch (IOException ex) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+            status=101;
+            response=ex.getMessage();
         } finally {
             if (connection != null) {
                 try {
@@ -71,6 +72,6 @@ public class ConnectJSON {
                 }
             }
         }
-        return null;
+        return String.valueOf(status)+response;
     }
 }

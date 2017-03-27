@@ -140,18 +140,13 @@ public class LoginActivity extends AppCompatActivity {
      * the user.
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private String url;
+        private String url = "";
         private String success = "0";
+        private String userId = "0";
+        private String userName = "";
         private String message = "1";
         private String data = "";
-        JSONObject jsonData;
-
-        public UserLoginTask() {
-            this.url = MyGlobalVars.url_connect_user
-                    + MyGlobalVars.TAG_EMAIL + mEmailView.getText().toString()
-                    + MyGlobalVars.TAG_PASSWORD + mPasswordView.getText().toString();
-        }
+        private JSONObject jsonData;
 
         /**
          * Before starting background thread Show Progress Dialog
@@ -165,16 +160,28 @@ public class LoginActivity extends AppCompatActivity {
             pDialog.setCancelable(true);
             pDialog.show();
             mEmailSignInButton.setClickable(false);
+            url = MyGlobalVars.url_connect_user
+                    + MyGlobalVars.TAG_EMAIL + "=" + mEmailView.getText().toString() + "&"
+                    + MyGlobalVars.TAG_PASSWORD + "=" + mPasswordView.getText().toString();
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            ConnectJSON connection = new ConnectJSON(url);
-            data = connection.getJSON();
+            data = new ConnectToDB(url).connectJSON();
             if(data.isEmpty()) {
-                // TODO treatment of JSON
                 return false;
             } else {
+                try {
+                    jsonData = new JSONObject(data);
+                    this.message = jsonData.getString(MyGlobalVars.TAG_MESSAGE);
+                    this.success = jsonData.getString(MyGlobalVars.TAG_SUCCESS);
+                    JSONArray users = jsonData.getJSONArray(MyGlobalVars.TAG_USER);
+                    JSONObject user = users.getJSONObject(0);
+                    this.userId = user.getString(MyGlobalVars.TAG_USER_ID);
+                    this.userName = user.getString(MyGlobalVars.TAG_NAME);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 return true;
             }
         }
@@ -186,7 +193,8 @@ public class LoginActivity extends AppCompatActivity {
                 pDialog.dismiss();
             }
             if (this.success.contentEquals("1")) {
-                // TODO save data in main thread
+                user_id = this.userId;
+                user_name = this.userName;
                 success();
             } else {
                 Toast.makeText(getApplicationContext(), this.message,

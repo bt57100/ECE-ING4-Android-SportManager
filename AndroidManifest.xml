@@ -35,7 +35,7 @@
             android:name=".SettingsActivity"
             android:label="@string/nav_settings"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Register" />
+        <activity android:name=".RegisterActivity" />
     </application>
 
 </manifest>

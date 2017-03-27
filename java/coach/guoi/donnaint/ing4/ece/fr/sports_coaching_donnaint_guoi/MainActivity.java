@@ -15,6 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+
+import coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi.database.Match;
+import coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi.database.MatchDB;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,12 +40,16 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         addMatchToView(fragmentTransaction,"match2");
         addMatchToView(fragmentTransaction,"match3");
         addMatchToView(fragmentTransaction,"match4");
         fragmentTransaction.commit();
+
+        testDb();
     }
 
     public void addMatchToView(FragmentTransaction fragmentTransaction, String id) {
@@ -91,5 +101,38 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void testDb() {
+        MatchDB matchDB = new MatchDB(this);
+        Match match1 = new Match(1, "1 - 2", "BO3", "2017/03/17", "Kevin", "Nicolas");
+        Match match2 = new Match(2, "1 - 2", "BO3", "2017/03/17", "Guoi", "Donnaint");
+        matchDB.open();
+        matchDB.insertMatch(match1);
+        matchDB.insertMatch(match2);
+        ArrayList<Match> matches = matchDB.getAllMatches();
+        for(Match match : matches) {
+            Toast.makeText(this, match.toString(), Toast.LENGTH_SHORT).show();
+        }
+        Match getMatch = matchDB.getMatchByPlayer(match1.getTeam1());
+        if(getMatch != null) {
+            Toast.makeText(this, getMatch.toString(), Toast.LENGTH_LONG).show();
+            getMatch.setTeam1("Donnaint");
+            matchDB.updateMatchById(getMatch.getId(), getMatch);
+        }
+        getMatch = matchDB.getMatchByPlayer(getMatch.getTeam1());
+        if(getMatch != null) {
+            Toast.makeText(this, getMatch.toString(), Toast.LENGTH_LONG).show();
+            matchDB.removeMatchById(getMatch.getId());
+        } else {
+            Toast.makeText(this, "Pas bon !", Toast.LENGTH_LONG).show();
+        }
+        getMatch = matchDB.getMatchByPlayer(getMatch.getTeam1());
+        if(getMatch == null) {
+            Toast.makeText(this, "This match does not exist", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "A match has been found", Toast.LENGTH_LONG).show();
+        }
+        matchDB.close();
     }
 }
