@@ -50,7 +50,10 @@ public class StarcraftActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_starcraft) {
+        if (id == R.id.nav_last_updates) {
+            Intent i = new Intent(this, MainActivity.class);
+            startActivity(i);
+        } else if (id == R.id.nav_starcraft) {
             Intent i = new Intent(this, StarcraftActivity.class);
             startActivity(i);
         } else if (id == R.id.nav_chat) {

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -69,7 +70,7 @@ public class MatchDB {
      * @param match
      * @return
      */
-    public long insertMatch(Match match){
+    public int insertMatch(Match match){
         // Create ContentValues (like HashMap)
         ContentValues values = new ContentValues();
         // Link key to value
@@ -79,7 +80,7 @@ public class MatchDB {
         values.put(COL_TEAM1, match.getTeam1());
         values.put(COL_TEAM2, match.getTeam2());
         // Add to database
-        return matchDb.insert(TABLE_MATCH, null, values);
+        return (int) matchDb.insert(TABLE_MATCH, null, values);
     }
 
 
@@ -88,8 +89,10 @@ public class MatchDB {
      * @return
      */
     public ArrayList<Match> getAllMatches(){
-        String queryString = "SELECT * FROM " + TABLE_MATCH;
-        Cursor c = matchDb.rawQuery(queryString, new String[]{});
+        String queryString = "SELECT" + COL_ID + COL_SCORE + COL_TYPE +
+                COL_DATE + COL_TEAM1 + COL_TEAM2 + "FROM " + TABLE_MATCH;
+        Cursor c = matchDb.query(TABLE_MATCH, new String[]{COL_ID, COL_SCORE, COL_TYPE,
+                COL_DATE, COL_TEAM1, COL_TEAM2}, null, null, null, null, null);
         // If nothing is found, return null
         if (c.getCount() == 0)
             return null;
@@ -97,13 +100,14 @@ public class MatchDB {
         ArrayList<Match> matches = new ArrayList<>();
         // Else go to first element
         c.moveToFirst();
-        for(int i = 0; i < c.getCount(); i++) {
+        do {
             // Create a match corresponding to the return value of the query
             Match match = new Match(c.getInt(NUM_COL_ID), c.getString(NUM_COL_SCORE),
                     c.getString(NUM_COL_TYPE), c.getString(NUM_COL_DATE),
                     c.getString(NUM_COL_TEAM1), c.getString(NUM_COL_TEAM2));
             matches.add(match);
-        }
+        } while (c.moveToNext());
+
         // Close cursor
         c.close();
 
@@ -178,5 +182,10 @@ public class MatchDB {
     }
 
     private void deleteDb() {
+    }
+
+    public void clearDatabase() {
+        String clearDBQuery = "DELETE FROM "+TABLE_MATCH;
+        matchDb.execSQL(clearDBQuery);
     }
 }

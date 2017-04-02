@@ -4,17 +4,18 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.GridLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -23,7 +24,17 @@ import coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi.database.Ma
 import coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi.database.MatchDB;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, Iview {
+
+    public MatchDB matchDB = new MatchDB(this);
+    public TextView textAddMatch;
+    public GridLayout gridAddMatch;
+    public EditText editAddTeam1;
+    public EditText editAddTeam2;
+    public EditText editAddDate;
+    public EditText editAddType;
+    public EditText editAddScore;
+    public Button buttonAddMatch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,30 +52,69 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        textAddMatch = (TextView) findViewById(R.id.textAddMatch);
+        gridAddMatch = (GridLayout) findViewById(R.id.gridAddMatch);
+        editAddTeam1 = (EditText) findViewById(R.id.editAddTeam1);
+        editAddTeam2 = (EditText) findViewById(R.id.editAddTeam2);
+        editAddDate = (EditText) findViewById(R.id.editAddDate);
+        editAddType = (EditText) findViewById(R.id.editAddType);
+        editAddScore = (EditText) findViewById(R.id.editAddScore);
+        buttonAddMatch = (Button) findViewById(R.id.buttonAddMatch);
 
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        addMatchToView(fragmentTransaction,"match2");
-        addMatchToView(fragmentTransaction,"match3");
-        addMatchToView(fragmentTransaction,"match4");
-        fragmentTransaction.commit();
+        textAddMatch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gridAddMatch.setVisibility(View.VISIBLE);
+                textAddMatch.setVisibility(View.GONE);
+            }
+        });
+        buttonAddMatch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                matchDB.open();
+                Match newMatch = new Match(editAddScore.getText().toString(),
+                        editAddType.getText().toString(),
+                        editAddDate.getText().toString(),
+                        editAddTeam1.getText().toString(),
+                        editAddTeam2.getText().toString());
+                newMatch.setId(matchDB.insertMatch(newMatch));
+                matchDB.close();
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                addMatchToView(fragmentTransaction, newMatch.getId(), newMatch.getTeam1(), newMatch.getTeam2(),
+                        newMatch.getScore(), newMatch.getDate(), newMatch.getType());
+                fragmentTransaction.commit();
+                gridAddMatch.setVisibility(View.GONE);
+                textAddMatch.setVisibility(View.VISIBLE);
+            }
+        });
 
-        testDb();
+        if(savedInstanceState == null) {
+            ArrayList<Match> matches = testDb();
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            for (Match match : matches) {
+                addMatchToView(fragmentTransaction, match.getId(), match.getTeam1(), match.getTeam2(),
+                        match.getScore(), match.getDate(), match.getType());
+            }
+            Toast.makeText(this, String.valueOf(matches.size()), Toast.LENGTH_LONG);
+            fragmentTransaction.commit();
+        }
     }
 
-    public void addMatchToView(FragmentTransaction fragmentTransaction, String id) {
+    public void addMatchToView(FragmentTransaction fragmentTransaction, int id,
+                               String team1, String team2, String score, String date, String type) {
         GameInfoFragment gameInfo = new GameInfoFragment();
-        gameInfo.setArguments(createGameBundle("Nicolas","Kevin","Donnaint","Guoi",id));
+        gameInfo.setArguments(createGameBundle(id,team1,team2,score, date, type));
+        gameInfo.setMainView(this);
         fragmentTransaction.add(R.id.mainGameContainer, gameInfo);
     }
 
-    public Bundle createGameBundle (String player1, String player2, String team1, String team2,
-                                    String score) {
+    public Bundle createGameBundle (int id, String team1, String team2, String score, String date, String type) {
         Bundle gameBundle = new Bundle();
-        gameBundle.putString(MyGlobalVars.TAG_PLAYER1, player1);
-        gameBundle.putString(MyGlobalVars.TAG_PLAYER2, player2);
+        gameBundle.putInt(MyGlobalVars.TAG_ID, id);
         gameBundle.putString(MyGlobalVars.TAG_TEAM1, team1);
         gameBundle.putString(MyGlobalVars.TAG_TEAM2, team2);
+        gameBundle.putString(MyGlobalVars.TAG_DATE, date);
+        gameBundle.putString(MyGlobalVars.TAG_TYPE, type);
         gameBundle.putString(MyGlobalVars.TAG_SCORE, score);
         return gameBundle;
     }
@@ -85,7 +135,10 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_starcraft) {
+        if (id == R.id.nav_last_updates) {
+            Intent i = new Intent(this, MainActivity.class);
+            startActivity(i);
+        } else if (id == R.id.nav_starcraft) {
             Intent i = new Intent(this, StarcraftActivity.class);
             startActivity(i);
         } else if (id == R.id.nav_chat) {
@@ -103,36 +156,23 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void testDb() {
-        MatchDB matchDB = new MatchDB(this);
-        Match match1 = new Match(1, "1 - 2", "BO3", "2017/03/17", "Kevin", "Nicolas");
-        Match match2 = new Match(2, "1 - 2", "BO3", "2017/03/17", "Guoi", "Donnaint");
+    public ArrayList<Match> testDb() {
+        Match match1 = new Match("1 - 2", "BO3", "2017/03/17", "Kevin", "Nicolas");
+        Match match2 = new Match("2 - 1", "BO3", "2017/03/17", "Guoi", "Donnaint");
         matchDB.open();
-        matchDB.insertMatch(match1);
-        matchDB.insertMatch(match2);
+        match1.setId(matchDB.insertMatch(match1));
+        match2.setId(matchDB.insertMatch(match2));
         ArrayList<Match> matches = matchDB.getAllMatches();
-        for(Match match : matches) {
-            Toast.makeText(this, match.toString(), Toast.LENGTH_SHORT).show();
-        }
-        Match getMatch = matchDB.getMatchByPlayer(match1.getTeam1());
-        if(getMatch != null) {
-            Toast.makeText(this, getMatch.toString(), Toast.LENGTH_LONG).show();
-            getMatch.setTeam1("Donnaint");
-            matchDB.updateMatchById(getMatch.getId(), getMatch);
-        }
-        getMatch = matchDB.getMatchByPlayer(getMatch.getTeam1());
-        if(getMatch != null) {
-            Toast.makeText(this, getMatch.toString(), Toast.LENGTH_LONG).show();
-            matchDB.removeMatchById(getMatch.getId());
-        } else {
-            Toast.makeText(this, "Pas bon !", Toast.LENGTH_LONG).show();
-        }
-        getMatch = matchDB.getMatchByPlayer(getMatch.getTeam1());
-        if(getMatch == null) {
-            Toast.makeText(this, "This match does not exist", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, "A match has been found", Toast.LENGTH_LONG).show();
-        }
         matchDB.close();
+        return matches;
+    }
+
+    @Override
+    public void removeFragment(GameInfoFragment fragment) {
+        matchDB.open();
+        matchDB.removeMatchById(fragment.getMatchId());
+        matchDB.close();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.remove(fragment).commit();
     }
 }

@@ -24,6 +24,15 @@ public class Match {
         this.team2 = team2;
     }
 
+    public Match(String score, String type, String date, String team1,
+                 String team2) {
+        this.score = score;
+        this.type = type;
+        this.date = date;
+        this.team1 = team1;
+        this.team2 = team2;
+    }
+
     public void setId(int id) {
         this.id = id;
     }

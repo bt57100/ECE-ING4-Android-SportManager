@@ -21,7 +21,133 @@
             android:id="@+id/mainGameContainer"
             android:padding="@dimen/game_info_padding">
 
+            <TextView
+                android:id="@+id/textAddMatch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="@string/add_match"
+                android:textColor="@color/colorBlue"
+                android:visibility="visible" />
 
+            <GridLayout
+                android:id="@+id/gridAddMatch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:columnCount="2"
+                android:rowCount="4"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/textAddTeam1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="1"
+                    android:layout_gravity="center"
+                    android:layout_rowSpan="1"
+                    android:text="@string/team1" />
+
+                <EditText
+                    android:id="@+id/editAddTeam1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="1"
+                    android:layout_gravity="center"
+                    android:layout_rowSpan="1"
+                    android:ems="10"
+                    android:hint="@string/team1"
+                    android:inputType="textPersonName" />
+
+                <TextView
+                    android:id="@+id/textAddTeam2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="1"
+                    android:layout_gravity="center"
+                    android:layout_rowSpan="1"
+                    android:text="@string/team2" />
+
+                <EditText
+                    android:id="@+id/editAddTeam2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="1"
+                    android:layout_gravity="center"
+                    android:layout_rowSpan="1"
+                    android:ems="10"
+                    android:hint="@string/team2"
+                    android:inputType="textPersonName" />
+
+                <TextView
+                    android:id="@+id/textAddType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="1"
+                    android:layout_gravity="center"
+                    android:layout_rowSpan="1"
+                    android:text="@string/type" />
+
+                <EditText
+                    android:id="@+id/editAddType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="1"
+                    android:layout_gravity="center"
+                    android:layout_rowSpan="1"
+                    android:ems="10"
+                    android:hint="@string/type"
+                    android:inputType="textPersonName" />
+
+                <TextView
+                    android:id="@+id/textAddDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="1"
+                    android:layout_gravity="center"
+                    android:layout_rowSpan="1"
+                    android:text="@string/date" />
+
+                <EditText
+                    android:id="@+id/editAddDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="1"
+                    android:layout_gravity="center"
+                    android:layout_rowSpan="1"
+                    android:ems="10"
+                    android:hint="@string/date"
+                    android:inputType="datetime" />
+
+                <TextView
+                    android:id="@+id/textAddScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="1"
+                    android:layout_gravity="center"
+                    android:layout_rowSpan="1"
+                    android:text="@string/score" />
+
+                <EditText
+                    android:id="@+id/editAddScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="1"
+                    android:layout_gravity="center"
+                    android:layout_rowSpan="1"
+                    android:ems="10"
+                    android:hint="@string/score"
+                    android:inputType="textPersonName" />
+
+                <Button
+                    android:id="@+id/buttonAddMatch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="2"
+                    android:layout_gravity="end"
+                    android:layout_rowSpan="1"
+                    android:text="@string/add_match" />
+            </GridLayout>
         </LinearLayout>
     </ScrollView>
 

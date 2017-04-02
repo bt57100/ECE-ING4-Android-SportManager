@@ -16,6 +16,12 @@
     <string name="title_activity_chat">ChatActivity</string>
     <string name="title_activity_settings">SettingsActivity</string>
 
+    <string name="add_match">+ Add match</string>
+    <string name="team1">Team 1</string>
+    <string name="team2">Team 2</string>
+    <string name="date">Date</string>
+    <string name="type">Type</string>
+    <string name="score">Score</string>
 
     <!-- Strings related to login -->
     <string name="email">Email</string>

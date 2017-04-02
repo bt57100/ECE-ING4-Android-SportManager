@@ -22,10 +22,13 @@ public class MyGlobalVars {
     public static final String TAG_SUCCESS = "SUCCESS";
 
 
-    public static final String TAG_PLAYER1 = "PLAYER1";
-    public static final String TAG_PLAYER2 = "PLAYER2";
+    public static final String TAG_ID = "ID";
+    public static final String TAG_TYPE = "TYPE";
+    public static final String TAG_DATE = "DATE";
     public static final String TAG_TEAM1 = "TEAM1";
     public static final String TAG_TEAM2 = "TEAM2";
     public static final String TAG_SCORE = "SCORE";
 
+    public static final String TAG_FRAGMENT_TRANSACTION = "FRAGMENT_TRANSACTION";
+    public static final String TAG_MATCH_DB = "MATCH_DB";
 }
