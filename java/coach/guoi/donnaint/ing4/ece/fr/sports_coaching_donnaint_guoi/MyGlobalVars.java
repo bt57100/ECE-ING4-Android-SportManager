@@ -12,6 +12,7 @@ public class MyGlobalVars {
 
     // Connection timeout
     public static final int TIMEOUT = 4000;
+    public static final int NB_SAVED_MATCHES = 3;
 
     public static final String TAG_EMAIL = "EMAIL";
     public static final String TAG_MESSAGE = "MESSAGE";

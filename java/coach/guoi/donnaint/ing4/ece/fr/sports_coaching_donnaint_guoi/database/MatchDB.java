@@ -95,7 +95,7 @@ public class MatchDB {
                 COL_DATE, COL_TEAM1, COL_TEAM2}, null, null, null, null, null);
         // If nothing is found, return null
         if (c.getCount() == 0)
-            return null;
+            return new ArrayList<>();
 
         ArrayList<Match> matches = new ArrayList<>();
         // Else go to first element

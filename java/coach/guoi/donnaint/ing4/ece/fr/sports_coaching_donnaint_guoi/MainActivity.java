@@ -1,5 +1,6 @@
 package coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi;
 
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -66,7 +67,6 @@ public class MainActivity extends AppCompatActivity
         editAddType = (EditText) findViewById(R.id.editAddType);
         editAddScore = (EditText) findViewById(R.id.editAddScore);
         buttonAddMatch = (Button) findViewById(R.id.buttonAddMatch);
-
         textAddMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,14 +82,23 @@ public class MainActivity extends AppCompatActivity
         });
 
         if(savedInstanceState == null) {
-            ArrayList<Match> matches = testDb();
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            for (Match match : matches) {
-                addMatchToView(fragmentTransaction, match.getId(), match.getTeam1(), match.getTeam2(),
-                        match.getScore(), match.getDate(), match.getType());
+
+            matchDB.open();
+            ArrayList<Match> matches = matchDB.getAllMatches();
+            matchDB.close();
+            // If database empty add one for instance
+            if (matches.isEmpty()) {
+                matchDB.open();
+                matchDB.insertMatch(new Match("1 - 2", "Bo3", "2017-01-04","Kevin", "Nicolas"));
+                matches = matchDB.getAllMatches();
+                matchDB.close();
             }
-            Toast.makeText(this, String.valueOf(matches.size()), Toast.LENGTH_LONG);
-            fragmentTransaction.commit();
+            for (Match match : matches) {
+                FragmentTransaction fragmentTransaction = addMatchToView(match.getId(),
+                        match.getTeam1(), match.getTeam2(),
+                        match.getScore(), match.getDate(), match.getType());
+                fragmentTransaction.commit();
+            }
         }
     }
 
@@ -100,15 +109,19 @@ public class MainActivity extends AppCompatActivity
         super.attachBaseContext(context);
     }
 
-    public void addMatchToView(FragmentTransaction fragmentTransaction, int id,
-                               String team1, String team2, String score, String date, String type) {
+    public FragmentTransaction addMatchToView(int id, String team1, String team2,
+                                              String score, String date, String type) {
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         GameInfoFragment gameInfo = new GameInfoFragment();
         gameInfo.setArguments(createGameBundle(id,team1,team2,score, date, type));
         gameInfo.setMainView(this);
-        fragmentTransaction.add(R.id.mainGameContainer, gameInfo);
+        String tag = String.valueOf(id);
+        fragmentTransaction.add(R.id.mainGameContainer, gameInfo, tag);
+        return fragmentTransaction;
     }
 
-    public void addMatchValid() {boolean cancel = false;
+    public void addMatchValid() {
+        boolean cancel = false;
         View focusView = null;
         if (TextUtils.isEmpty(editAddScore.getText())) {
             editAddScore.setError(getString(R.string.error_field_required));
@@ -160,23 +173,42 @@ public class MainActivity extends AppCompatActivity
             // form field with an error.
             focusView.requestFocus();
         } else {
-            matchDB.open();
             Match newMatch = new Match(editAddScore.getText().toString(),
                     editAddType.getText().toString(),
                     editAddDate.getText().toString(),
                     editAddTeam1.getText().toString(),
                     editAddTeam2.getText().toString());
+            matchDB.open();
             newMatch.setId(matchDB.insertMatch(newMatch));
             matchDB.close();
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            addMatchToView(fragmentTransaction, newMatch.getId(), newMatch.getTeam1(), newMatch.getTeam2(),
+            FragmentTransaction fragmentTransaction = addMatchToView(newMatch.getId(),
+                    newMatch.getTeam1(), newMatch.getTeam2(),
                     newMatch.getScore(), newMatch.getDate(), newMatch.getType());
             fragmentTransaction.commit();
+            limitSavedMatches();
             gridAddMatch.setVisibility(View.GONE);
             textAddMatch.setVisibility(View.VISIBLE);
         }
     }
 
+    public void limitSavedMatches() {
+        matchDB.open();
+        ArrayList<Match> matches = matchDB.getAllMatches();
+        matchDB.close();
+        while (matches.size() > MyGlobalVars.NB_SAVED_MATCHES) {
+            String tag = String.valueOf(matches.get(0).getId());
+            Fragment fragment = getFragmentManager().findFragmentByTag(tag);
+            if(fragment instanceof GameInfoFragment) {
+                removeFragment((GameInfoFragment) fragment);
+                matchDB.open();
+                matches = matchDB.getAllMatches();
+                matchDB.close();
+            } else {
+                Toast.makeText(this, "Failed to reduced", Toast.LENGTH_LONG);
+                break;
+            }
+        }
+    }
 
     private boolean isNameValid(String name) {
         if(name.length() > 30) {
@@ -246,11 +278,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     public ArrayList<Match> testDb() {
-        Match match1 = new Match("1 - 2", "BO3", "2017/03/17", "Kevin", "Nicolas");
+        //Match match1 = new Match("1 - 2", "BO3", "2017/03/17", "Kevin", "Nicolas");
         Match match2 = new Match("2 - 1", "BO3", "2017/03/17", "Guoi", "Donnaint");
         matchDB.open();
-        match1.setId(matchDB.insertMatch(match1));
+        //match1.setId(matchDB.insertMatch(match1));
         match2.setId(matchDB.insertMatch(match2));
+        matchDB.close();
+        // limitSavedMatches();
+        matchDB.open();
         ArrayList<Match> matches = matchDB.getAllMatches();
         matchDB.close();
         return matches;

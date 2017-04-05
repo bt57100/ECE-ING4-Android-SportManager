@@ -1,14 +1,12 @@
 package coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi;
 
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.plus.PlusOneButton;
 
@@ -21,8 +19,6 @@ public class GameInfoFragment extends Fragment {
 
     private Iview mainView;
 
-    private MatchDB matchDB;
-    private FragmentTransaction fragmentTransaction;
     private int getMatchId = 0;
     private String team1 = "";
     private String team2 = "";
@@ -45,8 +41,6 @@ public class GameInfoFragment extends Fragment {
             type = getArguments().getString(MyGlobalVars.TAG_TYPE);
             date = getArguments().getString(MyGlobalVars.TAG_DATE);
             score = getArguments().getString(MyGlobalVars.TAG_SCORE);
-            matchDB = (MatchDB) getArguments().get(MyGlobalVars.TAG_MATCH_DB);
-            fragmentTransaction = (FragmentTransaction) getArguments().get(MyGlobalVars.TAG_FRAGMENT_TRANSACTION);
         }
         setRetainInstance(true);
     }
@@ -67,6 +61,7 @@ public class GameInfoFragment extends Fragment {
         textTeam2.setText(team2);
         textDate.setText(date);
         textType.setText(type);
+        textType.setText(this.getTag());
         textScore.setText(score);
         gridGame.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View arg0) {
@@ -87,5 +82,9 @@ public class GameInfoFragment extends Fragment {
 
     public void setMainView(Iview mainView) {
         this.mainView = mainView;
+    }
+
+    public String getTeam1() {
+        return team1;
     }
 }
