@@ -61,7 +61,6 @@ public class GameInfoFragment extends Fragment {
         textTeam2.setText(team2);
         textDate.setText(date);
         textType.setText(type);
-        textType.setText(this.getTag());
         textScore.setText(score);
         gridGame.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View arg0) {

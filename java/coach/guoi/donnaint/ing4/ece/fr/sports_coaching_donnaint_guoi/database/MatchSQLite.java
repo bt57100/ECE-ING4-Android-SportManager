@@ -19,11 +19,14 @@ public class MatchSQLite extends SQLiteOpenHelper {
     private static final String COL_DATE = "Date";
     private static final String COL_TEAM1 = "Team1";
     private static final String COL_TEAM2 = "Team2";
+    private static final String COL_LATITUDE = "Latitude";
+    private static final String COL_LONGITUDE = "Longitude";
 
     private static final String CREATE_BDD = "CREATE TABLE " + TABLE_MATCH + " ("
             + COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COL_SCORE + " TEXT NOT NULL, "
             + COL_TYPE + " TEXT NOT NULL, " + COL_DATE + " TEXT NOT NULL, "
-            + COL_TEAM1 + " TEXT NOT NULL, " + COL_TEAM2 + " TEXT NOT NULL);";
+            + COL_TEAM1 + " TEXT NOT NULL, " + COL_TEAM2 + " TEXT NOT NULL, "
+            + COL_LATITUDE + " TEXT NOT NULL, " + COL_LONGITUDE + " TEXT NOT NULL);";
 
 
     public MatchSQLite(Context context, String name, CursorFactory factory, int version) {

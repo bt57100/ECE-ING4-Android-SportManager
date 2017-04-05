@@ -20,9 +20,18 @@ import android.widget.GridLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 import coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi.configuration.LanguageHelper;
@@ -30,7 +39,8 @@ import coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi.database.Ma
 import coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi.database.MatchDB;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, Iview {
+        implements NavigationView.OnNavigationItemSelectedListener, Iview,
+        OnMapReadyCallback {
 
     public MatchDB matchDB = new MatchDB(this);
     public TextView textAddMatch;
@@ -41,6 +51,12 @@ public class MainActivity extends AppCompatActivity
     public EditText editAddType;
     public EditText editAddScore;
     public Button buttonAddMatch;
+
+    private Marker marker;
+    private GoogleMap googleMap = null;
+    private LatLng latlng = new LatLng(48,2);
+    private HashMap<Integer, LatLng> latLngMap = new HashMap<>();
+    private HashMap<Integer, Marker> markerMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,14 +98,14 @@ public class MainActivity extends AppCompatActivity
         });
 
         if(savedInstanceState == null) {
-
             matchDB.open();
             ArrayList<Match> matches = matchDB.getAllMatches();
             matchDB.close();
             // If database empty add one for instance
             if (matches.isEmpty()) {
                 matchDB.open();
-                matchDB.insertMatch(new Match("1 - 2", "Bo3", "2017-01-04","Kevin", "Nicolas"));
+                Match match = new Match("2 - 1", "BO3", "2017/03/17", "Guoi", "Donnaint", "48.8584", "2.2945");
+                matchDB.insertMatch(match);
                 matches = matchDB.getAllMatches();
                 matchDB.close();
             }
@@ -98,8 +114,15 @@ public class MainActivity extends AppCompatActivity
                         match.getTeam1(), match.getTeam2(),
                         match.getScore(), match.getDate(), match.getType());
                 fragmentTransaction.commit();
+                LatLng latLng = new LatLng(Double.parseDouble(match.getLatitude()), Double.parseDouble(match.getLongitude()));
+                latLngMap.put(match.getId(), latLng);
             }
         }
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.mapView);
+        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -177,7 +200,9 @@ public class MainActivity extends AppCompatActivity
                     editAddType.getText().toString(),
                     editAddDate.getText().toString(),
                     editAddTeam1.getText().toString(),
-                    editAddTeam2.getText().toString());
+                    editAddTeam2.getText().toString(),
+                    String.valueOf(latlng.latitude),
+                    String.valueOf(latlng.longitude));
             matchDB.open();
             newMatch.setId(matchDB.insertMatch(newMatch));
             matchDB.close();
@@ -186,6 +211,7 @@ public class MainActivity extends AppCompatActivity
                     newMatch.getScore(), newMatch.getDate(), newMatch.getType());
             fragmentTransaction.commit();
             limitSavedMatches();
+            addMaps(newMatch.getId());
             gridAddMatch.setVisibility(View.GONE);
             textAddMatch.setVisibility(View.VISIBLE);
         }
@@ -277,20 +303,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public ArrayList<Match> testDb() {
-        //Match match1 = new Match("1 - 2", "BO3", "2017/03/17", "Kevin", "Nicolas");
-        Match match2 = new Match("2 - 1", "BO3", "2017/03/17", "Guoi", "Donnaint");
-        matchDB.open();
-        //match1.setId(matchDB.insertMatch(match1));
-        match2.setId(matchDB.insertMatch(match2));
-        matchDB.close();
-        // limitSavedMatches();
-        matchDB.open();
-        ArrayList<Match> matches = matchDB.getAllMatches();
-        matchDB.close();
-        return matches;
-    }
-
     @Override
     public void removeFragment(GameInfoFragment fragment) {
         matchDB.open();
@@ -298,5 +310,35 @@ public class MainActivity extends AppCompatActivity
         matchDB.close();
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.remove(fragment).commit();
+        latLngMap.remove(fragment.getMatchId());
+        markerMap.get(fragment.getMatchId()).remove();
+        markerMap.remove(fragment.getMatchId());
+    }
+
+    @Override
+    public void onMapReady(final GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        this.googleMap.getUiSettings().setZoomControlsEnabled(true);
+        final GoogleMap map = this.googleMap;
+        LatLng position = new LatLng(48.8584, 2.2945);
+        this.marker = map.addMarker(new MarkerOptions().position(position).title("Current Position"));
+        this.googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                marker.remove();
+                marker = map.addMarker(new MarkerOptions().position(latLng).title("Current Position"));
+                latlng = latLng;
+            }
+        });
+        for (Integer key : latLngMap.keySet()) {
+            markerMap.put(key, this.googleMap.addMarker(new MarkerOptions().position(latLngMap.get(key))));
+            this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLngMap.get(key)));
+        }
+    }
+
+    public void addMaps(int matchId) {
+        latLngMap.put(matchId,latlng);
+        markerMap.put(matchId, this.googleMap.addMarker(new MarkerOptions().position(latlng)));
+        this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
     }
 }

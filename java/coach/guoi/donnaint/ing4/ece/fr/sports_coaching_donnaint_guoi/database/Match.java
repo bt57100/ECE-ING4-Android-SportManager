@@ -13,24 +13,28 @@ public class Match {
     private String date;
     private String team1;
     private String team2;
+    private String latitude;
+    private String longitude;
 
-    public Match(int id, String score, String type, String date, String team1,
-                 String team2) {
+    public Match(int id, String score, String type, String date, String team1, String team2, String latitude, String longitude) {
         this.id = id;
         this.score = score;
         this.type = type;
         this.date = date;
         this.team1 = team1;
         this.team2 = team2;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
-    public Match(String score, String type, String date, String team1,
-                 String team2) {
+    public Match(String score, String type, String date, String team1, String team2, String latitude, String longitude) {
         this.score = score;
         this.type = type;
         this.date = date;
         this.team1 = team1;
         this.team2 = team2;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public void setId(int id) {
@@ -57,6 +61,14 @@ public class Match {
         this.team2 = team2;
     }
 
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
     public int getId() {
         return id;
     }
@@ -79,6 +91,14 @@ public class Match {
 
     public String getTeam2() {
         return team2;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
     }
 
     public String toString() {

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class MatchDB {
     private static final int VERSION_BDD = 1;
-    private static final String MATCH_DB = "match.db";
+    private static final String MATCH_DB = "matchs.db";
 
     private static final String TABLE_MATCH = "table_match";
     private static final String COL_ID = "ID";
@@ -29,6 +29,11 @@ public class MatchDB {
     private static final int NUM_COL_TEAM1 = 4;
     private static final String COL_TEAM2 = "Team2";
     private static final int NUM_COL_TEAM2 = 5;
+    private static final String COL_LATITUDE = "Latitude";
+    private static final int NUM_COL_LATITUDE = 6;
+    private static final String COL_LONGITUDE = "Longitude";
+    private static final int NUM_COL_LONGITUDE = 7;
+
 
     private SQLiteDatabase matchDb;
     private MatchSQLite matchSQLite;
@@ -79,6 +84,8 @@ public class MatchDB {
         values.put(COL_DATE, match.getDate());
         values.put(COL_TEAM1, match.getTeam1());
         values.put(COL_TEAM2, match.getTeam2());
+        values.put(COL_LATITUDE, match.getLatitude());
+        values.put(COL_LONGITUDE, match.getLongitude());
         // Add to database
         return (int) matchDb.insert(TABLE_MATCH, null, values);
     }
@@ -89,22 +96,24 @@ public class MatchDB {
      * @return
      */
     public ArrayList<Match> getAllMatches(){
+        ArrayList<Match> matches = new ArrayList<>();
         String queryString = "SELECT" + COL_ID + COL_SCORE + COL_TYPE +
-                COL_DATE + COL_TEAM1 + COL_TEAM2 + "FROM " + TABLE_MATCH;
+                COL_DATE + COL_TEAM1 + COL_TEAM2 + COL_LATITUDE + COL_LONGITUDE
+                + "FROM " + TABLE_MATCH;
         Cursor c = matchDb.query(TABLE_MATCH, new String[]{COL_ID, COL_SCORE, COL_TYPE,
-                COL_DATE, COL_TEAM1, COL_TEAM2}, null, null, null, null, null);
+                COL_DATE, COL_TEAM1, COL_TEAM2, COL_LATITUDE, COL_LONGITUDE},null, null, null, null, null);
         // If nothing is found, return null
         if (c.getCount() == 0)
-            return new ArrayList<>();
+            return matches;
 
-        ArrayList<Match> matches = new ArrayList<>();
         // Else go to first element
         c.moveToFirst();
         do {
             // Create a match corresponding to the return value of the query
             Match match = new Match(c.getInt(NUM_COL_ID), c.getString(NUM_COL_SCORE),
                     c.getString(NUM_COL_TYPE), c.getString(NUM_COL_DATE),
-                    c.getString(NUM_COL_TEAM1), c.getString(NUM_COL_TEAM2));
+                    c.getString(NUM_COL_TEAM1), c.getString(NUM_COL_TEAM2),
+                    c.getString(NUM_COL_LATITUDE), c.getString(NUM_COL_LONGITUDE));
             matches.add(match);
         } while (c.moveToNext());
 
@@ -130,6 +139,8 @@ public class MatchDB {
         values.put(COL_DATE, match.getDate());
         values.put(COL_TEAM1, match.getTeam1());
         values.put(COL_TEAM2, match.getTeam2());
+        values.put(COL_LATITUDE, match.getLatitude());
+        values.put(COL_LONGITUDE, match.getLongitude());
         // Add to database
         return matchDb.update(TABLE_MATCH, values, COL_ID + " = " +id, null);
     }
@@ -173,15 +184,13 @@ public class MatchDB {
         // Create a match corresponding to the return value of the query
         Match match = new Match(c.getInt(NUM_COL_ID), c.getString(NUM_COL_SCORE),
                 c.getString(NUM_COL_TYPE), c.getString(NUM_COL_DATE),
-                c.getString(NUM_COL_TEAM1), c.getString(NUM_COL_TEAM2));
+                c.getString(NUM_COL_TEAM1), c.getString(NUM_COL_TEAM2),
+                c.getString(NUM_COL_LATITUDE), c.getString(NUM_COL_LONGITUDE));
         // Close cursor
         c.close();
 
         // Return match
         return match;
-    }
-
-    private void deleteDb() {
     }
 
     public void clearDatabase() {
