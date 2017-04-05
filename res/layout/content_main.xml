@@ -116,7 +116,7 @@
                     android:layout_gravity="center"
                     android:layout_rowSpan="1"
                     android:ems="10"
-                    android:hint="@string/date"
+                    android:hint="@string/date_format"
                     android:inputType="datetime" />
 
                 <TextView

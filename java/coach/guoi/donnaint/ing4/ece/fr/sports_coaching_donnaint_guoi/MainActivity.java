@@ -1,7 +1,7 @@
 package coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi;
 
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -10,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -18,8 +19,12 @@ import android.widget.GridLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
+import coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi.configuration.LanguageHelper;
 import coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi.database.Match;
 import coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi.database.MatchDB;
 
@@ -52,6 +57,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        setTitle(R.string.title_activity_news);
         textAddMatch = (TextView) findViewById(R.id.textAddMatch);
         gridAddMatch = (GridLayout) findViewById(R.id.gridAddMatch);
         editAddTeam1 = (EditText) findViewById(R.id.editAddTeam1);
@@ -71,20 +77,7 @@ public class MainActivity extends AppCompatActivity
         buttonAddMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                matchDB.open();
-                Match newMatch = new Match(editAddScore.getText().toString(),
-                        editAddType.getText().toString(),
-                        editAddDate.getText().toString(),
-                        editAddTeam1.getText().toString(),
-                        editAddTeam2.getText().toString());
-                newMatch.setId(matchDB.insertMatch(newMatch));
-                matchDB.close();
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                addMatchToView(fragmentTransaction, newMatch.getId(), newMatch.getTeam1(), newMatch.getTeam2(),
-                        newMatch.getScore(), newMatch.getDate(), newMatch.getType());
-                fragmentTransaction.commit();
-                gridAddMatch.setVisibility(View.GONE);
-                textAddMatch.setVisibility(View.VISIBLE);
+                addMatchValid();
             }
         });
 
@@ -100,12 +93,108 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        Locale newLocale = new Locale(MyGlobalVars.TAG_CURRENT_LANGUAGE);
+        Context context = LanguageHelper.wrap(newBase, newLocale);
+        super.attachBaseContext(context);
+    }
+
     public void addMatchToView(FragmentTransaction fragmentTransaction, int id,
                                String team1, String team2, String score, String date, String type) {
         GameInfoFragment gameInfo = new GameInfoFragment();
         gameInfo.setArguments(createGameBundle(id,team1,team2,score, date, type));
         gameInfo.setMainView(this);
         fragmentTransaction.add(R.id.mainGameContainer, gameInfo);
+    }
+
+    public void addMatchValid() {boolean cancel = false;
+        View focusView = null;
+        if (TextUtils.isEmpty(editAddScore.getText())) {
+            editAddScore.setError(getString(R.string.error_field_required));
+            focusView = editAddScore;
+            cancel = true;
+        } else if (!isNameValid(editAddScore.getText().toString())) {
+            editAddScore.setError(getString(R.string.error_invalid_name_format));
+            focusView = editAddScore;
+            cancel = true;
+        }
+        if (TextUtils.isEmpty(editAddTeam1.getText())) {
+            editAddTeam1.setError(getString(R.string.error_field_required));
+            focusView = editAddTeam1;
+            cancel = true;
+        } else if (!isNameValid(editAddTeam1.getText().toString())) {
+            editAddScore.setError(getString(R.string.error_invalid_name_format));
+            focusView = editAddTeam1;
+            cancel = true;
+        }
+        if (TextUtils.isEmpty(editAddTeam2.getText())) {
+            editAddTeam2.setError(getString(R.string.error_field_required));
+            focusView = editAddTeam2;
+            cancel = true;
+        } else if (!isNameValid(editAddTeam2.getText().toString())) {
+            editAddTeam2.setError(getString(R.string.error_invalid_name_format));
+            focusView = editAddTeam2;
+            cancel = true;
+        }
+        if (TextUtils.isEmpty(editAddType.getText())) {
+            editAddType.setError(getString(R.string.error_field_required));
+            focusView = editAddType;
+            cancel = true;
+        } else if (!isNameValid(editAddType.getText().toString())) {
+            editAddType.setError(getString(R.string.error_invalid_email));
+            focusView = editAddType;
+            cancel = true;
+        }
+        if (TextUtils.isEmpty(editAddDate.getText())) {
+            editAddDate.setError(getString(R.string.error_field_required));
+            focusView = editAddDate;
+            cancel = true;
+        } else if (!isDateValid(editAddDate.getText().toString())) {
+            editAddDate.setError(getString(R.string.error_invalid_date_format));
+            focusView = editAddDate;
+            cancel = true;
+        }
+        if (cancel) {
+            // There was an error
+            // form field with an error.
+            focusView.requestFocus();
+        } else {
+            matchDB.open();
+            Match newMatch = new Match(editAddScore.getText().toString(),
+                    editAddType.getText().toString(),
+                    editAddDate.getText().toString(),
+                    editAddTeam1.getText().toString(),
+                    editAddTeam2.getText().toString());
+            newMatch.setId(matchDB.insertMatch(newMatch));
+            matchDB.close();
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            addMatchToView(fragmentTransaction, newMatch.getId(), newMatch.getTeam1(), newMatch.getTeam2(),
+                    newMatch.getScore(), newMatch.getDate(), newMatch.getType());
+            fragmentTransaction.commit();
+            gridAddMatch.setVisibility(View.GONE);
+            textAddMatch.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+    private boolean isNameValid(String name) {
+        if(name.length() > 30) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean isDateValid(String birth) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            format.parse(birth);
+            return true;
+        }
+        catch(ParseException e){
+            return false;
+        }
     }
 
     public Bundle createGameBundle (int id, String team1, String team2, String score, String date, String type) {

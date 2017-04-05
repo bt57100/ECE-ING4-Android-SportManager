@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">Sports_Coaching_DONNAINT_GUOI</string>
+
+    <string name="navigation_drawer_open">Ouvrir menu</string>
+    <string name="navigation_drawer_close">Fermer menu</string>
+
+    <string name="nav_title_game">Game</string>
+    <string name="nav_game_starcraft">Starcraft II</string>
+    <string name="nav_chat">Chat</string>
+    <string name="nav_quit">Quitter</string>
+    <string name="nav_title_miscellaneous">Autres</string>
+    <string name="nav_settings">Options</string>
+    <string name="nav_last_updates">Nouvelles</string>
+
+    <string name="title_activity_news">Nouvelles</string>
+    <string name="title_activity_starcraft">Starcraft II</string>
+    <string name="title_activity_chat">Chat</string>
+    <string name="title_activity_settings">Options</string>
+
+    <string name="add_match">+ Ajouter match</string>
+    <string name="team1">Equipe 1</string>
+    <string name="team2">Equipe 2</string>
+    <string name="date">Date</string>
+    <string name="type">Type</string>
+    <string name="score">Score</string>
+    <string name="error_invalid_name_format">Nom invalide: trop long (30 max)</string>
+    <string name="date_format">YYYY-MM-DD</string>
+    <string name="error_invalid_date_format">Date invalide: YYYY-MM-DD</string>
+
+    <!-- Strings related to login -->
+    <string name="email">Adresse mail</string>
+    <string name="password">Mot de passe</string>
+    <string name="sign_in">Connexion</string>
+    <string name="register">Inscription</string>
+    <string name="register_sign_in">Insciption et connexion</string>
+
+    <string-array name="array_language">
+        <item>English</item>
+        <item>Francais</item>
+    </string-array>
+    <string name="save">Sauvegarder</string>
+
+    <string name="error_field_required">Champ requis</string>
+    <string name="error_invalid_email">Adresse mail invalide</string>
+    <string name="error_invalid_password">Mot de passe trop court (5 mini)</string>
+
+</resources>

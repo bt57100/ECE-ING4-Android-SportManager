@@ -31,4 +31,7 @@ public class MyGlobalVars {
 
     public static final String TAG_FRAGMENT_TRANSACTION = "FRAGMENT_TRANSACTION";
     public static final String TAG_MATCH_DB = "MATCH_DB";
+    public static final String TAG_LANGUAGE = "LANGUAGE";
+    public static final String TAG_DEFAULT_LANGUAGE = "en";
+    public static String TAG_CURRENT_LANGUAGE = "en";
 }
