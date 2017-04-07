@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 
 /**
  * A login screen that offers login via email/password.
+ * //TODO ALL CLASS
  */
 public class LoginActivity extends AppCompatActivity {
     // Progress Dialog

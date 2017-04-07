@@ -18,7 +18,8 @@ import org.json.JSONObject;
 
 
 /**
- * A login screen that offers login via email/password.
+ * //TODO ALL CLASS
+ *
  */
 public class RegisterActivity extends AppCompatActivity {
     // Progress Dialog
