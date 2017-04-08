@@ -65,12 +65,19 @@ public class ImageFragment extends Fragment {
             imageView.setImageBitmap(imageBitmap);
 
         /* Remove fragment on long click */
-        linearLayout.setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View arg0) {
-                removeFragment();
-                return true;
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSimpleClick();
             }
         });
+        /* Remove fragment on long click */
+                linearLayout.setOnLongClickListener(new View.OnLongClickListener() {
+                    public boolean onLongClick(View arg0) {
+                        removeFragment();
+                        return true;
+                    }
+                });
         return view;
     }
 
@@ -82,6 +89,14 @@ public class ImageFragment extends Fragment {
     }
 
     /**
+     * Save image in gallery
+     */
+    public void onSimpleClick() {
+        mainView.onSimpleClick(this);
+    }
+
+
+    /**
      * Set main view containing this fragment
      * @param mainView
      */
@@ -89,4 +104,11 @@ public class ImageFragment extends Fragment {
         this.mainView = mainView;
     }
 
+    public Bitmap getImageBitmap() {
+        return imageBitmap;
+    }
+
+    public String getTitle() {
+        return editText.getText().toString();
+    }
 }

@@ -1,17 +1,11 @@
 package coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi;
 
 import android.app.FragmentTransaction;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,24 +13,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 import coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi.configuration.LanguageHelper;
 
 /**
- * Starcraft activity display Starcraft's games
+ * Starcraft activity to take photo for Starcraft's games
  */
 public class StarcraftActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Iimage {
@@ -77,6 +64,7 @@ public class StarcraftActivity extends AppCompatActivity
             textUsername.setText(user_name);
         }
 
+        /* Set button to take photo */
         buttonPictureStarcraft = (Button) findViewById(R.id.buttonPictureStarcraft);
         buttonPictureStarcraft.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,60 +92,40 @@ public class StarcraftActivity extends AppCompatActivity
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                Toast.makeText(this, "Error saving photo", Toast.LENGTH_SHORT).show();
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                //TODO SAVE
-              /*  Uri photoURI = FileProvider.getUriForFile(this,
-                        "coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);*/
-                startActivityForResult(takePictureIntent, MyGlobalVars.REQUEST_IMAGE_CAPTURE);
-            }
-            Toast.makeText(this, String.valueOf(MyGlobalVars.PATH), Toast.LENGTH_LONG).show();
-
+            startActivityForResult(takePictureIntent, MyGlobalVars.REQUEST_IMAGE_CAPTURE);
         }
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = new File(getFilesDir(), "photos");
-        File image = new File(storageDir, imageFileName+".jpg");
-
-        // Save a file: path for use with ACTION_VIEW intents
-        MyGlobalVars.PATH = image.getAbsolutePath();
-        return image;
-    }
-
+    /**
+     * Get the taken photo add a fragment to display it
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MyGlobalVars.REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             addImageToView(imageBitmap);
-            galleryAddPic();
         }
     }
 
+    /**
+     * Remove this fragment from view
+     */
     @Override
     public void removeFragment(ImageFragment fragment) {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.remove(fragment).commit();
     }
 
-    private void galleryAddPic() {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(MyGlobalVars.PATH);
-        Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        this.sendBroadcast(mediaScanIntent);
+    /**
+     * Save image in gallery
+     */
+    @Override
+    public void onSimpleClick(ImageFragment fragment) {
+        MediaStore.Images.Media.insertImage(getContentResolver(), fragment.getImageBitmap(), fragment.getTitle(), "Starcraft II");
     }
 
     /**
