@@ -11,6 +11,7 @@ import android.support.annotation.RequiresApi;
 import java.util.Locale;
 
 /**
+ * LanguageHelper class enable language Locale to be added to the context
  * Created by Kevin on 05/04/2017.
  */
 

@@ -31,14 +31,14 @@ import java.util.logging.Logger;
 
 /**
  * A login screen that offers login via email/password.
- * //TODO ALL CLASS
+ * //TODO DATABASE
  */
 public class LoginActivity extends AppCompatActivity {
     // Progress Dialog
     private ProgressDialog pDialog;
 
-    private static String user_id;
-    private static String user_name;
+    private static String user_id="";
+    private static String user_name="";
     private static Button mEmailSignInButton;
 
     // UI references.
@@ -49,11 +49,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         // Set up the login form.
         mEmailView = (EditText) findViewById(R.id.email);
-
         mPasswordView = (EditText) findViewById(R.id.passwordLogin);
-
         mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,7 +60,6 @@ public class LoginActivity extends AppCompatActivity {
                 attemptLogin();
             }
         });
-
         TextView registerText = (TextView) findViewById(R.id.register_text);
         registerText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,6 +131,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void success() {
         Intent i = new Intent(this, MainActivity.class);
+        i.putExtra(MyGlobalVars.TAG_NAME, user_name);
+        i.putExtra(MyGlobalVars.TAG_ID, user_id);
         startActivity(i);
     }
 

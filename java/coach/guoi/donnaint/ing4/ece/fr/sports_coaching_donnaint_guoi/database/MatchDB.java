@@ -94,7 +94,6 @@ public class MatchDB {
         return (int) matchDb.insert(TABLE_MATCH, null, values);
     }
 
-
     /**
      * Get all matches in database
      * @return
@@ -104,8 +103,8 @@ public class MatchDB {
         String queryString = "SELECT" + COL_ID + COL_SCORE + COL_TYPE +
                 COL_DATE + COL_TEAM1 + COL_TEAM2 + COL_LATITUDE + COL_LONGITUDE
                 + "FROM " + TABLE_MATCH;
-        Cursor c = matchDb.query(TABLE_MATCH, new String[]{COL_ID, COL_SCORE, COL_TYPE,
-                COL_DATE, COL_TEAM1, COL_TEAM2, COL_LATITUDE, COL_LONGITUDE},null, null, null, null, null);
+        Cursor c = matchDb.query(TABLE_MATCH, new String[]{COL_ID, COL_SCORE, COL_TYPE,COL_DATE,
+                COL_TEAM1, COL_TEAM2, COL_LATITUDE, COL_LONGITUDE},null, null, null, null, null);
         // If nothing is found, return empty arrayList
         if (c.getCount() == 0)
             return matches;
@@ -160,6 +159,14 @@ public class MatchDB {
     }
 
     /**
+     * Empty table match in database
+     */
+    public void clearDatabase() {
+        String clearDBQuery = "DELETE FROM "+TABLE_MATCH;
+        matchDb.execSQL(clearDBQuery);
+    }
+
+    /**
      * Find match by player
      * @param name
      * @return
@@ -192,13 +199,5 @@ public class MatchDB {
         c.close();
         // Return match
         return match;
-    }
-
-    /**
-     * Empty table match in database
-     */
-    public void clearDatabase() {
-        String clearDBQuery = "DELETE FROM "+TABLE_MATCH;
-        matchDb.execSQL(clearDBQuery);
     }
 }

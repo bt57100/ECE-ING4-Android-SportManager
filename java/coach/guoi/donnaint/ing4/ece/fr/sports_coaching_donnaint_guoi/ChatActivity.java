@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import java.util.Locale;
 
@@ -24,6 +25,9 @@ import coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi.configurati
  */
 public class ChatActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    /* Session variables */
+    private String user_name;
+    private String user_id;
 
     /**
      * On create function
@@ -44,6 +48,17 @@ public class ChatActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        /* Session variables */
+        if(getIntent().hasExtra(MyGlobalVars.TAG_ID)){
+            this.user_id = getIntent().getStringExtra(MyGlobalVars.TAG_ID);
+        }
+        if(getIntent().hasExtra(MyGlobalVars.TAG_NAME)){
+            this.user_name = getIntent().getStringExtra(MyGlobalVars.TAG_NAME);
+            View header = navigationView.getHeaderView(0);
+            TextView textUsername = (TextView) header.findViewById(R.id.textUsername);
+            textUsername.setText(user_name);
+        }
     }
 
     /**
@@ -70,7 +85,6 @@ public class ChatActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
     /**
      * Navigation drawer to navigate through menu
      * @param item
@@ -84,18 +98,26 @@ public class ChatActivity extends AppCompatActivity
         if (id == R.id.nav_last_updates) {
             // Main page
             Intent i = new Intent(this, MainActivity.class);
+            i.putExtra(MyGlobalVars.TAG_ID, user_id);
+            i.putExtra(MyGlobalVars.TAG_NAME, user_name);
             startActivity(i);
         } else if (id == R.id.nav_starcraft) {
             // Starcraft page
             Intent i = new Intent(this, StarcraftActivity.class);
+            i.putExtra(MyGlobalVars.TAG_ID, user_id);
+            i.putExtra(MyGlobalVars.TAG_NAME, user_name);
             startActivity(i);
         } else if (id == R.id.nav_chat) {
             // Chat page
             Intent i = new Intent(this, ChatActivity.class);
+            i.putExtra(MyGlobalVars.TAG_ID, user_id);
+            i.putExtra(MyGlobalVars.TAG_NAME, user_name);
             startActivity(i);
         } else if (id == R.id.nav_settings) {
             // Settings page
             Intent i = new Intent(this, SettingsActivity.class);
+            i.putExtra(MyGlobalVars.TAG_ID, user_id);
+            i.putExtra(MyGlobalVars.TAG_NAME, user_name);
             startActivity(i);
         } else if (id == R.id.logout) {
             // Log out

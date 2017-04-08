@@ -46,6 +46,10 @@ import coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi.database.Ma
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Iview,
         OnMapReadyCallback {
+    /* Session variables */
+    private String user_name = "Username";
+    private String user_id = "0";
+
     // Match database
     public MatchDB matchDB = new MatchDB(this);
     // Text view to add a match
@@ -93,6 +97,18 @@ public class MainActivity extends AppCompatActivity
 
         // Set activity title
         setTitle(R.string.title_activity_news);
+
+        /* Session variables */
+        if(getIntent().hasExtra(MyGlobalVars.TAG_ID)){
+            this.user_id = getIntent().getStringExtra(MyGlobalVars.TAG_ID);
+        }
+        if(getIntent().hasExtra(MyGlobalVars.TAG_NAME)){
+            this.user_name = getIntent().getStringExtra(MyGlobalVars.TAG_NAME);
+            View header = navigationView.getHeaderView(0);
+            TextView textUsername = (TextView) header.findViewById(R.id.textUsername);
+            textUsername.setText(user_name);
+        }
+
 
         // Initialize all views
         textAddMatch = (TextView) findViewById(R.id.textAddMatch);
@@ -366,18 +382,26 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_last_updates) {
             // Main page
             Intent i = new Intent(this, MainActivity.class);
+            i.putExtra(MyGlobalVars.TAG_ID, user_id);
+            i.putExtra(MyGlobalVars.TAG_NAME, user_name);
             startActivity(i);
         } else if (id == R.id.nav_starcraft) {
             // Starcraft page
             Intent i = new Intent(this, StarcraftActivity.class);
+            i.putExtra(MyGlobalVars.TAG_ID, user_id);
+            i.putExtra(MyGlobalVars.TAG_NAME, user_name);
             startActivity(i);
         } else if (id == R.id.nav_chat) {
             // Chat page
             Intent i = new Intent(this, ChatActivity.class);
+            i.putExtra(MyGlobalVars.TAG_ID, user_id);
+            i.putExtra(MyGlobalVars.TAG_NAME, user_name);
             startActivity(i);
         } else if (id == R.id.nav_settings) {
             // Settings page
             Intent i = new Intent(this, SettingsActivity.class);
+            i.putExtra(MyGlobalVars.TAG_ID, user_id);
+            i.putExtra(MyGlobalVars.TAG_NAME, user_name);
             startActivity(i);
         } else if (id == R.id.logout) {
             // Log out
