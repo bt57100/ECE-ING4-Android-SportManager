@@ -406,6 +406,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
+     * Move camera to selected match
+     * @param fragment
+     */
+    @Override
+    public void moveToMarker(GameInfoFragment fragment) {
+        LatLng latLng = markerMap.get(fragment.getMatchId()).getPosition();
+        this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+    }
+
+    /**
      * Manage google map view
      * @param googleMap
      */

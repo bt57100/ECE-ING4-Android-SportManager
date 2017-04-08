@@ -76,6 +76,14 @@ public class GameInfoFragment extends Fragment {
         textType.setText(type);
         textScore.setText(score);
 
+        /* Move camera to Match on click */
+        gridGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                moveToMarker();
+            }
+        });
+
         /* Remove fragment on long click */
         gridGame.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View arg0) {
@@ -92,6 +100,14 @@ public class GameInfoFragment extends Fragment {
     public void removeFragment() {
         mainView.removeFragment(this);
     }
+
+    /**
+     * Remove this fragment from view
+     */
+    public void moveToMarker() {
+        mainView.moveToMarker(this);
+    }
+
 
     /**
      * Get match ID of the matc this fragment displays

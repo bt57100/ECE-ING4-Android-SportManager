@@ -11,4 +11,7 @@ import android.view.View;
 
 public interface Iview {
     void removeFragment(GameInfoFragment fragment);
+
+    void moveToMarker(GameInfoFragment fragment);
+
 }
