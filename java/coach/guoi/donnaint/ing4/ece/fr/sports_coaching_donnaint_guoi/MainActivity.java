@@ -51,19 +51,19 @@ public class MainActivity extends AppCompatActivity
     private String user_id = "0";
 
     // Match database
-    public MatchDB matchDB = new MatchDB(this);
+    private MatchDB matchDB = new MatchDB(this);
     // Text view to add a match
-    public TextView textAddMatch;
+    private TextView textAddMatch;
     // Grid Layout to add a match
-    public GridLayout gridAddMatch;
+    private GridLayout gridAddMatch;
     /* EditText to add data to new match */
-    public EditText editAddTeam1;
-    public EditText editAddTeam2;
-    public EditText editAddDate;
-    public EditText editAddType;
-    public EditText editAddScore;
+    private EditText editAddTeam1;
+    private EditText editAddTeam2;
+    private EditText editAddDate;
+    private EditText editAddType;
+    private EditText editAddScore;
     // Button to add match to local database and display
-    public Button buttonAddMatch;
+    private Button buttonAddMatch;
 
     // Current marker position (position store if a match is added)
     private Marker marker;
@@ -433,10 +433,18 @@ public class MainActivity extends AppCompatActivity
      * Move camera to selected match
      * @param fragment
      */
-    @Override
     public void moveToMarker(GameInfoFragment fragment) {
         LatLng latLng = markerMap.get(fragment.getMatchId()).getPosition();
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+    }
+
+    /**
+     * Move camera to selected match
+     * @param fragment
+     */
+    @Override
+    public void onSimpleClick(GameInfoFragment fragment) {
+        moveToMarker(fragment);
     }
 
     /**

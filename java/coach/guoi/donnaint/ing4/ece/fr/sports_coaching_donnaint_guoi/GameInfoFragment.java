@@ -105,7 +105,7 @@ public class GameInfoFragment extends Fragment {
      * Remove this fragment from view
      */
     public void moveToMarker() {
-        mainView.moveToMarker(this);
+        mainView.onSimpleClick(this);
     }
 
 

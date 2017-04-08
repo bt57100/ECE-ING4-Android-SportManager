@@ -34,6 +34,9 @@
     <string name="register">Inscription</string>
     <string name="register_sign_in">Insciption et connexion</string>
 
+    <string name="takePicture">Prendre une photo</string>
+    <string name="title">Titre</string>
+
     <string-array name="array_language">
         <item>English</item>
         <item>Francais</item>

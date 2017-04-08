@@ -1,9 +1,17 @@
 package coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi;
 
+import android.app.FragmentTransaction;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,16 +21,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi.configuration.LanguageHelper;
 
 /**
  * Starcraft activity display Starcraft's games
  */
 public class StarcraftActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, Iimage {
     /* Session variables */
     private String user_name;
     private String user_id;
+
+    private Button buttonPictureStarcraft;
 
     /**
      * On create function
@@ -54,6 +76,115 @@ public class StarcraftActivity extends AppCompatActivity
             TextView textUsername = (TextView) header.findViewById(R.id.textUsername);
             textUsername.setText(user_name);
         }
+
+        buttonPictureStarcraft = (Button) findViewById(R.id.buttonPictureStarcraft);
+        buttonPictureStarcraft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dispatchTakePictureIntent();
+            }
+        });
+    }
+
+    /**
+     * Set base context to activity
+     * enable language change
+     * @param newBase
+     */
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        Locale newLocale = new Locale(MyGlobalVars.TAG_CURRENT_LANGUAGE);
+        Context context = LanguageHelper.wrap(newBase, newLocale);
+        super.attachBaseContext(context);
+    }
+
+    /**
+     * Open camera to take MyGlobalVars.REQUEST_IMAGE_CAPTURE (=1) picture
+     */
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                Toast.makeText(this, "Error saving photo", Toast.LENGTH_SHORT).show();
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                //TODO SAVE
+              /*  Uri photoURI = FileProvider.getUriForFile(this,
+                        "coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);*/
+                startActivityForResult(takePictureIntent, MyGlobalVars.REQUEST_IMAGE_CAPTURE);
+            }
+            Toast.makeText(this, String.valueOf(MyGlobalVars.PATH), Toast.LENGTH_LONG).show();
+
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = new File(getFilesDir(), "photos");
+        File image = new File(storageDir, imageFileName+".jpg");
+
+        // Save a file: path for use with ACTION_VIEW intents
+        MyGlobalVars.PATH = image.getAbsolutePath();
+        return image;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MyGlobalVars.REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            addImageToView(imageBitmap);
+            galleryAddPic();
+        }
+    }
+
+    @Override
+    public void removeFragment(ImageFragment fragment) {
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.remove(fragment).commit();
+    }
+
+    private void galleryAddPic() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(MyGlobalVars.PATH);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+    }
+
+    /**
+     * Get a fragment containing new photo information
+     * @return
+     */
+    public void addImageToView(Bitmap imageBitmap) {
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        ImageFragment imageFragment = new ImageFragment();
+        imageFragment.setArguments(createGameBundle(imageBitmap));
+        imageFragment.setMainView(this);
+        fragmentTransaction.add(R.id.imageContainer, imageFragment);
+        fragmentTransaction.commit();
+    }
+
+    /**
+     * Create bundle from match information to send to fragment
+     * @param imageBitmap
+     * @return
+     */
+    public Bundle createGameBundle (Bitmap imageBitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        imageBitmap.compress(Bitmap.CompressFormat.PNG, 50, stream);
+        byte[] byteArray = stream.toByteArray();
+        Bundle gameBundle = new Bundle();
+        gameBundle.putByteArray(MyGlobalVars.TAG_ID, byteArray);
+        return gameBundle;
     }
 
     /**
@@ -68,6 +199,7 @@ public class StarcraftActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
     /**
      * Navigation drawer to navigate through menu
      * @param item

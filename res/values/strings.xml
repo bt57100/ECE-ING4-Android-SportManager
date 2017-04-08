@@ -34,6 +34,9 @@
     <string name="register">Register</string>
     <string name="register_sign_in">Register and Sign in</string>
 
+    <string name="takePicture">Take a picture</string>
+    <string name="title">Title</string>
+
     <string-array name="array_language">
         <item>English</item>
         <item>Francais</item>

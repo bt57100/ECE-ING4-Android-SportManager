@@ -32,4 +32,8 @@ public class MyGlobalVars {
 
     /* TAG current language */
     public static String TAG_CURRENT_LANGUAGE = "en";
+
+    /* Number of picture taken each time */
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static String PATH = "";
 }
