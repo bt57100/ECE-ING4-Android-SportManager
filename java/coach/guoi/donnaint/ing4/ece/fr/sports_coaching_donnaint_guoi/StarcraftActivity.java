@@ -79,9 +79,11 @@ public class StarcraftActivity extends AppCompatActivity
         checkPermission();
     }
 
+    /**
+     * Get permission to access and modify pictures.
+     */
     private void checkPermission(){
         int permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                     this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
@@ -139,7 +141,8 @@ public class StarcraftActivity extends AppCompatActivity
      */
     @Override
     public void onSimpleClick(ImageFragment fragment) {
-        MediaStore.Images.Media.insertImage(getContentResolver(), fragment.getImageBitmap(), fragment.getTitle(), "Starcraft II");
+        MediaStore.Images.Media.insertImage(getContentResolver(), fragment.getImageBitmap(),
+                fragment.getTitle(), "Starcraft II");
     }
 
     /**

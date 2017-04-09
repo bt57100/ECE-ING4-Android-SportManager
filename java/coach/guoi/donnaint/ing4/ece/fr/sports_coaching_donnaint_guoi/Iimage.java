@@ -11,3 +11,4 @@ public interface Iimage {
 
     void onSimpleClick(ImageFragment fragment);
 }
+

@@ -17,10 +17,20 @@ import java.util.Locale;
 
 public class LanguageHelper extends ContextWrapper {
 
+    /**
+     * Constructor calling super class constructor
+     * @param base
+     */
     public LanguageHelper(Context base) {
         super(base);
     }
 
+    /**
+     * Set a locale configuration to the context
+     * @param context
+     * @param newLocale
+     * @return
+     */
     @SuppressWarnings("deprecation")
     public static ContextWrapper wrap(Context context, Locale newLocale) {
         Resources res = context.getResources();
