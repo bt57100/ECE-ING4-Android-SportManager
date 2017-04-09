@@ -85,8 +85,6 @@ public class StarcraftActivity extends AppCompatActivity
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                     this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        } else {
-            checkPermission();
         }
     }
 
