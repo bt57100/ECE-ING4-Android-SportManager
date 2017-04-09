@@ -3,9 +3,13 @@ package coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.SyncStateContract;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -72,6 +76,18 @@ public class StarcraftActivity extends AppCompatActivity
                 dispatchTakePictureIntent();
             }
         });
+        checkPermission();
+    }
+
+    private void checkPermission(){
+        int permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        } else {
+            checkPermission();
+        }
     }
 
     /**
@@ -108,7 +124,6 @@ public class StarcraftActivity extends AppCompatActivity
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             addImageToView(imageBitmap);
-            MediaStore.Images.Media.insertImage(getContentResolver(), imageBitmap, "", "Starcraft II");
         }
     }
 
