@@ -8,8 +8,8 @@ package coach.guoi.donnaint.ing4.ece.fr.sports_coaching_donnaint_guoi;
 public class MyGlobalVars {
 
     /* URL */
-    public static final String url_connect_user = "http://smartpillbox.byethost7.com/database/user/connect_user.php?";
-    public static final String url_register_user = "http://smartpillbox.byethost7.com/database/user/create_user.php?";
+    public static final String url_connect_user = "http://myhost.com/database/user/connect_user.php?";
+    public static final String url_register_user = "http://myhost.com/database/user/create_user.php?";
 
     /* Tag for distant database */
     public static final int TIMEOUT = 4000;
