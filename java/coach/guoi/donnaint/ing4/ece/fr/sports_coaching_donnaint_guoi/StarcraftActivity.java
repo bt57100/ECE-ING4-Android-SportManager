@@ -108,6 +108,7 @@ public class StarcraftActivity extends AppCompatActivity
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             addImageToView(imageBitmap);
+            MediaStore.Images.Media.insertImage(getContentResolver(), imageBitmap, "", "Starcraft II");
         }
     }
 
